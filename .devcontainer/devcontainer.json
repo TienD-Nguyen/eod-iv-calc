@@ -1,0 +1,36 @@
+{
+    "name": "options_calculations",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "configureZshAsDefaultShell": true
+        }
+    },
+    "runArgs": ["--init", "--rm"],
+    "hostRequirements": {
+        "gpu": "optional"
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
+            },
+            "extensions": [
+                "ms-python.python",
+                "charliermarsh.ruff",
+                "tamasfe.even-better-toml",
+                "ms-toolsai.jupyter",
+                "eamodia.gitlens"
+            ]
+        }
+    },
+    "mounts": [
+        "source=pi-agent-data,target=/home/vscode/.pi,type=volume"
+    ],
+    "remoteUser": "vscode",
+    "containerUser": "vscode",
+    "postCreateCommand": "bash .devcontainer/post_create.sh"
+}

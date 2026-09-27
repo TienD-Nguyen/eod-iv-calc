@@ -1,0 +1,25 @@
+[project]
+name = "options-calculations"
+version = "0.1.0"
+description = "Options Pricing and Calculations"
+readme = "README.md"
+authors = [
+    { name = "TienD-Nguyen", email = "tien.d.nguyen@outlook.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "lse-data>=0.14.0",
+    "numpy>=2.5.3",
+    "pandas>=3.0.5",
+    "plotly>=7.0.0",
+    "pyarrow>=25.0.1",
+    "python-dotenv>=1.2.3",
+    "scipy>=1.18.1",
+]
+
+[project.scripts]
+options-calculations = "options_calculations:main"
+
+[build-system]
+requires = ["uv_build>=0.12.11,<0.13.0"]
+build-backend = "uv_build"

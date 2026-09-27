@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Authentication keys
+auth.json
+
+# Environment variables
+.env
+
+# Data directory (prevent distribution issues)
+data/
+
+# Others
+*.ipynb
+*.parquet
