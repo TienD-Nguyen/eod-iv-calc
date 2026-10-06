@@ -23,6 +23,8 @@ def forecast_dividends(divs: list[dict], asof: date, horizon: date) -> list[tupl
         (date.fromisoformat(d["effective_date"]), float(d["dividend_amount"]))
         for d in divs if d["dividend_amount"]
     )
+    if not past:
+        return []  # non-dividend payer (e.g. TSLA): no declared, no continuation
     out = [(ex, amt) for ex, amt in past if asof < ex <= horizon]
     # ponytail: naive quarterly continuation; replace with declared divs when announced.
     ex, amt = past[-1]
@@ -105,4 +107,7 @@ if __name__ == "__main__":
     # dividend before expiry lowers call value
     c_div = crr_price(1, S, K, T, r, sig, divs=[(0.1, 2.0)])
     assert c_div < crr_c
+    # non-dividend payer: empty history -> no forecast, zero PV
+    assert forecast_dividends([], date(2026, 1, 1), date(2026, 12, 31)) == []
+    assert pv_dividends([], date(2026, 1, 1), date(2026, 6, 1), r) == 0.0
     print("OK")
