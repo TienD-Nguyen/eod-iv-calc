@@ -12,6 +12,7 @@ Run: python eod_iv_calc.py -d 20260923 -u AAPL   (after 18:00 ET)
 import argparse
 import csv
 import math
+import shutil
 import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -32,6 +33,15 @@ K_GRID = np.linspace(math.log(MONEYNESS[0]), math.log(MONEYNESS[1]), 41)
 DTE_GRID = [1, 7, 14, 21, 30, 45, 60, 90, 120, 150, 180]
 LOCAL_DIR = Path(__file__).parent.resolve()
 DATA_DIR = LOCAL_DIR / "../../data"
+KEEP_RUNS = 5  # per-ticker calculation dirs retained; older ones pruned
+
+
+def prune_runs(ticker_dir: Path, keep: int = KEEP_RUNS) -> None:
+    """Retain only the newest `keep` calculation dirs (ISO dates sort as strings)."""
+    dirs = sorted(p for p in ticker_dir.iterdir() if p.is_dir())
+    for old in dirs[:-keep]:
+        shutil.rmtree(old)
+        print(f"pruned {old}")
 
 
 def build_surface(rates: TreasuryYieldRatesManager, asof: date, spot: float,
@@ -111,6 +121,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Calculating EOD Options' Volatility Surfaces")
     parser.add_argument("-d", "--date", type=str, help="Date for the calculation in 'YYYYMMDD' format (e.g. 20260101).")
     parser.add_argument("-u", "--underlying", type=str, help="Underlying US ticker for the calculation (e.g. AAPL).")
+    parser.add_argument("--no-viz", action="store_true", help="Skip regenerating the HTML viewers.")
     args = parser.parse_args()
 
     if not args.underlying:
@@ -131,6 +142,14 @@ if __name__ == "__main__":
         treasury_yield_mgr, asof, spot, chain, divs)
     day_dir = DATA_DIR / underlying_ticker / asof.isoformat()
     save(day_dir, dte_grid, iv_matrix, validation)
+    prune_runs(DATA_DIR / underlying_ticker)
+
+    if not args.no_viz:
+        try:
+            from viz import regenerate  # lazy: keeps plotly off the calc path
+            regenerate()
+        except (Exception, SystemExit) as e:  # viz must never fail the calc
+            print(f"viz update skipped: {e}", file=sys.stderr)
 
     finite = iv_matrix[np.isfinite(iv_matrix)]
     diffs = sorted(abs(v["diff"]) for v in validation if v["diff"] is not None)

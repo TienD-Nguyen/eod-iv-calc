@@ -3,13 +3,15 @@
 viz.html:    3D gridded surface (log-moneyness x DTE); a ticker dropdown
              (restyle: visibility) composes with the date slider (animate:
              data) because the two controls touch disjoint trace attributes.
-smiles.html: one Plotly figure per ticker, each with its own expiry keys
-             (dropdown) and date slider; a plain HTML <select> swaps which
-             ticker figure is shown.
+smiles.html: one Plotly figure per ticker, each with its own expiry legend
+             (click to toggle, double-click to isolate) and date slider; a
+             plain HTML <select> swaps which ticker figure is shown.
 
-Both read data/<ticker>/<asof>/{surface,smile}.csv.
+Scans only the LATEST calculation per ticker under data/<ticker>/<asof>/
+(older run dirs are pruned by the pipeline). Plotly is imported lazily so
+importing this module stays cheap for the calc path.
 
-Run: python viz.py [out_dir]
+Run: python viz.py [out_dir]   (default: data/viz/)
 """
 import csv
 import math
@@ -17,11 +19,10 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import plotly.graph_objects as go
-import plotly.io as pio
 
 LOCAL_DIR = Path(__file__).parent.resolve()
 DATA_DIR = LOCAL_DIR / "../../data"
+VIZ_DIR = DATA_DIR / "viz"
 
 
 def _slider(dates: list[str]) -> list[dict]:
@@ -43,10 +44,20 @@ def _ticker_dropdown(tickers: list[str], n_traces_of) -> list[dict]:
              "x": 0.0, "y": 1.15, "xanchor": "left", "yanchor": "top"}]
 
 
+def _latest_files(root: Path, name: str) -> list[Path]:
+    """The latest asof dir's file `name`, one per ticker (ISO dates sort as strings)."""
+    latest: dict[str, tuple[str, Path]] = {}
+    for f in root.glob(f"*/[0-9]*/{name}"):
+        ticker, asof = f.parent.parent.name, f.parent.name
+        if asof > latest.get(ticker, ("",))[0]:
+            latest[ticker] = (asof, f)
+    return [f for _, f in latest.values()]
+
+
 def load_surfaces(root: Path) -> dict[str, dict[str, tuple]]:
-    """ticker -> date -> (k, dte, iv%) for each surface.csv under data/<ticker>/."""
+    """ticker -> date -> (k, dte, iv%) for the latest surface.csv per ticker."""
     out: dict[str, dict] = {}
-    for f in sorted(root.glob("*/*/surface.csv")):
+    for f in _latest_files(root, "surface.csv"):
         rows = list(csv.reader(open(f)))
         k = np.array([float(x) for x in rows[0][1:]])
         dte, iv = [], []
@@ -58,9 +69,9 @@ def load_surfaces(root: Path) -> dict[str, dict[str, tuple]]:
 
 
 def load_smiles(root: Path) -> dict[str, dict[str, dict[str, tuple]]]:
-    """ticker -> date -> expiry -> (strikes, crr_iv%, dte) from smile.csv files."""
+    """ticker -> date -> expiry -> (strikes, crr_iv%, dte), latest smile.csv per ticker."""
     out: dict[str, dict] = {}
-    for f in sorted(root.glob("*/*/smile.csv")):
+    for f in _latest_files(root, "smile.csv"):
         day: dict[str, list] = {}
         for r in csv.DictReader(open(f)):
             if r["crr_iv"]:
@@ -73,7 +84,8 @@ def load_smiles(root: Path) -> dict[str, dict[str, dict[str, tuple]]]:
     return out
 
 
-def build_surface_figure(surfaces: dict) -> go.Figure:
+def build_surface_figure(surfaces: dict):
+    import plotly.graph_objects as go
     tickers = sorted(surfaces)
     dates = sorted({d for t in surfaces.values() for d in t})
     first = tickers[0]
@@ -108,9 +120,10 @@ def build_surface_figure(surfaces: dict) -> go.Figure:
     return fig
 
 
-def build_smile_figure(ticker: str, days: dict) -> go.Figure:
+def build_smile_figure(ticker: str, days: dict):
     """One figure per ticker: one trace per expiry, toggled by legend clicks
     (double-click isolates); date slider for the asof day."""
+    import plotly.graph_objects as go
     dates = sorted(days)
     expiries = sorted({e for day in days.values() for e in day})
 
@@ -141,8 +154,9 @@ def build_smile_figure(ticker: str, days: dict) -> go.Figure:
     return fig
 
 
-def write_smiles_html(figs: dict[str, go.Figure], out: Path) -> None:
+def write_smiles_html(figs: dict, out: Path) -> None:
     """One HTML, one figure per ticker, swapped by a plain <select>."""
+    import plotly.io as pio
     tickers = sorted(figs)
     options = "".join(f'<option value="{t}">{t}</option>' for t in tickers)
     divs = []
@@ -161,18 +175,21 @@ def write_smiles_html(figs: dict[str, go.Figure], out: Path) -> None:
     )
 
 
-if __name__ == "__main__":
-    out_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(".")
-
-    surfaces = load_surfaces(DATA_DIR)
+def regenerate(data_dir: Path = DATA_DIR, out_dir: Path = VIZ_DIR) -> None:
+    """Rebuild both viewers from the latest calculation per ticker."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    surfaces = load_surfaces(data_dir)
     surf = build_surface_figure(surfaces)
     (out_dir / "viz.html").write_text(surf.to_html())
-
-    smiles = load_smiles(DATA_DIR)
+    smiles = load_smiles(data_dir)
     figs = {t: build_smile_figure(t, days) for t, days in smiles.items()}
     write_smiles_html(figs, out_dir / "smiles.html")
-
-    print(f"viz.html: {len(surfaces)} ticker(s), {len(surf.frames)} date(s) | "
+    print(f"{out_dir}/viz.html: {len(surfaces)} ticker(s) | "
           f"smiles.html: {len(figs)} ticker figure(s)")
-    assert len(surf.frames) >= 1 and len(figs) >= 1
+
+
+if __name__ == "__main__":
+    out_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else VIZ_DIR
+    regenerate(out_dir=out_dir)
+    assert (out_dir / "viz.html").exists() and (out_dir / "smiles.html").exists()
     print("OK")
