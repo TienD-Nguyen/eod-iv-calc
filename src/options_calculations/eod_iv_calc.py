@@ -15,6 +15,7 @@ import math
 import sys
 from datetime import date, datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import numpy as np
 
@@ -112,7 +113,10 @@ if __name__ == "__main__":
     parser.add_argument("-u", "--underlying", type=str, help="Underlying US ticker for the calculation (e.g. AAPL).")
     args = parser.parse_args()
 
-    input_date = datetime.strptime(args.date, "%Y%m%d").date()
+    if not args.underlying:
+        raise ValueError("No input underlying ticker received. Please entering an underlying US equity ticker for the calculation.")
+
+    input_date = datetime.strptime(args.date, "%Y%m%d").date() if args.date else datetime.now(tz=ZoneInfo("US/Eastern")).date()
     underlying_ticker = args.underlying
 
     schedule_mark = holiday_weekend_check(input_date)
