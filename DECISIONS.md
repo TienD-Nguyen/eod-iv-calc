@@ -36,6 +36,15 @@ C−P = a + b·K per expiry, compare F + PV(divs) vs spot, warn past 2%.
 Ratio F = −a/b used (not intercept directly) because a/b fit errors cancel
 — intercept alone false-alarmed (+9.9%) on 1-DTE rows.
 
+## 2026-09-23 — Sanity check uses declared dividends only (not forecast)
+Undeclared-but-due dividends inside the expiry window are a known blind
+spot (dev biased low by ~PV(div)/S ≈ 0.08% for AAPL; 2% threshold absorbs
+it). Accepted deliberately: the check stays factual and independent —
+forecast dividends are assumptions that would false-alarm on their own.
+The pricing path is unaffected: build_surface uses forecast_dividends
+(declared + quarterly continuation) for CRR. Revisit if a high-yield
+ticker (~1%/quarter) ever eats the threshold.
+
 ## 2026-09-18 — Tiered handling of the 5,000-row chain cap
 Band call → split by call/put → page by expected expiries. A capped page
 is never complete data. Strike-band split (Tier 3) deferred.
