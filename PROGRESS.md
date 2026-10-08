@@ -41,8 +41,6 @@ AMD, AVGO, META.
 - (nothing active)
 
 ## Known issues
-- `rates.py` / `holidays.py` `__main__` blocks contain stale references
-  (sandbox leftovers) — pipeline imports are unaffected
 - Smile viewer bounded to the retained 5 runs per ticker by design
 - Early-close spot window (12:55–13:00 ET) untested on a real early-close day
 - Vendor `min_dte`/`max_dte` params silently ignored server-side; filtering
@@ -52,7 +50,6 @@ AMD, AVGO, META.
 - 2 local commits not yet pushed (console script, symbols restructure)
 
 ## Next steps
-- Push 2 pending local commits to origin/main; commit README.md
 - Run a full week of EOD calcs across MAG10 tickers; watch chain-cap tiers
   (TSLA/NVDA most likely to hit Tier 1/2)
 - SVI/SSVI smile fit for arbitrage-free surface when pricing off it
