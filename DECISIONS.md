@@ -89,3 +89,17 @@ expiries); hidden figures need Plotly.Plots.resize when shown.
 Graphs always current; latest-run-only scan keeps rebuild cheap. Pruning
 bounds history by design (5 days on the sliders). Lazy plotly import keeps
 the calc path fast; viz failure never fails the calc (--no-viz to skip).
+
+## 2026-09-23+ — Console entry point over script execution
+Package-relative imports + `main()` + `eod-iv` script in pyproject: pipeline
+runs from any cwd via `uv run eod-iv`, and importing the module no longer
+triggers argparse. Script-style flat imports abandoned.
+
+## 2026-09-23+ — Test strategy: pytest, unit/integration/functional split
+Unit tests stub the vendor client and monkeypatch module path constants at
+tmp_path — never the network, never real data/. Pricer math asserted with
+tolerances (pytest.approx), never float equality. Dates always injected.
+Existing __main__ assert blocks harvested into the suite rather than
+duplicated. Live/functional tests deferred behind a marker until needed;
+integration pipeline test is the next suite to add. pytest is a dev-group
+dependency so production installs stay lean.

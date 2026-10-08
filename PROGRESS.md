@@ -35,7 +35,11 @@ AMD, AVGO, META.
   early-close mark
 - Storage restructure: per-ticker archives under `data/symbols/<ticker>/<asof>/`
 - Docs: `DECISIONS.md` (decision log), `README.md` (GitHub-style overview +
-  replication steps), this file
+  replication steps), `AGENT.md` (agent onboarding), this file
+- Test suite: pytest (dev dependency), `tests/unit/` covering pricers
+  (CRR/BS/dividends/IV inversion) and ingest logic (cap tiers, expiry window,
+  dividends store, parity check) — 21 tests, all stubbed, no network;
+  `tests/conftest.py` with shared fixtures
 
 ## In progress
 - (nothing active)
@@ -47,9 +51,11 @@ AMD, AVGO, META.
   is client-side (by design now, but don't trust the params)
 - Parity check misses undeclared dividends (~0.08% for AAPL, absorbed by the
   2% threshold; deliberate — see DECISIONS.md)
-- 2 local commits not yet pushed (console script, symbols restructure)
+- No integration or live/functional tests yet (unit suite only)
 
 ## Next steps
+- Add `tests/integration/test_pipeline.py` (eod_iv_calc.main with stubbed
+  vendor, tmp dirs) and a live-marked functional test (run manually only)
 - Run a full week of EOD calcs across MAG10 tickers; watch chain-cap tiers
   (TSLA/NVDA most likely to hit Tier 1/2)
 - SVI/SSVI smile fit for arbitrage-free surface when pricing off it
