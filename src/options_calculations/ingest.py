@@ -1,4 +1,4 @@
-"""Ingest EOD data from LondonStrategicEdge -> data/<ticker>/<asof>/.
+"""Ingest EOD data from LondonStrategicEdge -> data/symbols/<ticker>/<asof>/.
 
 Snapshot per trading day:
   chain.csv      option chain in the strike band, expiries within 3 months of
@@ -108,7 +108,7 @@ class SnapShooter:
 
     def __init__(self, ticker: str = "AAPL", trading_date: date | None = None):
         self.ticker = ticker
-        self.data_path = LOCAL_DIR / "../../data"
+        self.data_path = LOCAL_DIR / "../../data/symbols"
         self.divs_path = LOCAL_DIR / "../../data/dividends"
         self.client = LSE(api_key=dotenv_values(LOCAL_DIR / "../../.env")["LSE_API_KEY"])
         self.trading_date = trading_date or datetime.now(ZoneInfo("US/Eastern")).date()

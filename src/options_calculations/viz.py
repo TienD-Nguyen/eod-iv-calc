@@ -22,6 +22,7 @@ import numpy as np
 
 LOCAL_DIR = Path(__file__).parent.resolve()
 DATA_DIR = LOCAL_DIR / "../../data"
+SYMBOLS_DIR = DATA_DIR / "symbols"  # scanned for <ticker>/<asof>/ archives
 VIZ_DIR = DATA_DIR / "viz"
 
 
@@ -175,7 +176,7 @@ def write_smiles_html(figs: dict, out: Path) -> None:
     )
 
 
-def regenerate(data_dir: Path = DATA_DIR, out_dir: Path = VIZ_DIR) -> None:
+def regenerate(data_dir: Path = SYMBOLS_DIR, out_dir: Path = VIZ_DIR) -> None:
     """Rebuild both viewers from the latest calculation per ticker."""
     out_dir.mkdir(parents=True, exist_ok=True)
     surfaces = load_surfaces(data_dir)
