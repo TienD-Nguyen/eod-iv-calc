@@ -5,9 +5,9 @@ Flow: holiday/weekend check -> Treasury curve (rates.py) -> snapshot
 BS kept as a validation column) -> smile interp per expiry -> total-variance
 interp across the DTE grid -> surface.csv (gridded, for the 3D viewer) +
 smile.csv (native: one row per quote at its actual expiry/strike, for the
-smile viewers) under data/<ticker>/<asof>/.
+smile viewers) under data/symbols/<ticker>/<asof>/.
 
-Run: python eod_iv_calc.py -d 20260923 -u AAPL   (after 18:00 ET)
+Run: uv run eod-iv -d 20260923 -u AAPL   (after 18:00 ET)
 """
 import argparse
 import csv
@@ -20,12 +20,11 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
-from utils import int_or_str
-from holidays import holiday_weekend_check
-from rates import TreasuryYieldRatesManager
-from ingest import SnapShooter
-from surface import (forecast_dividends, pv_dividends, bs_price, crr_price,
-                     implied_vol)
+from .holidays import holiday_weekend_check
+from .rates import TreasuryYieldRatesManager
+from .ingest import SnapShooter
+from .surface import (forecast_dividends, pv_dividends, bs_price, crr_price,
+                      implied_vol)
 
 MAX_DTE = 180
 MONEYNESS = (0.8, 1.2)
@@ -33,6 +32,7 @@ K_GRID = np.linspace(math.log(MONEYNESS[0]), math.log(MONEYNESS[1]), 41)
 DTE_GRID = [1, 7, 14, 21, 30, 45, 60, 90, 120, 150, 180]
 LOCAL_DIR = Path(__file__).parent.resolve()
 DATA_DIR = LOCAL_DIR / "../../data"
+SYMBOLS_DIR = DATA_DIR / "symbols"  # per-underlying archives: <ticker>/<asof>/
 KEEP_RUNS = 5  # per-ticker calculation dirs retained; older ones pruned
 
 
@@ -117,12 +117,12 @@ def save(day_dir: Path, dte_grid, iv_matrix, validation) -> None:
         w.writerows(validation)
 
 
-if __name__ == "__main__":
+def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="Calculating EOD Options' Volatility Surfaces")
     parser.add_argument("-d", "--date", type=str, help="Date for the calculation in 'YYYYMMDD' format (e.g. 20260101).")
     parser.add_argument("-u", "--underlying", type=str, help="Underlying US ticker for the calculation (e.g. AAPL).")
     parser.add_argument("--no-viz", action="store_true", help="Skip regenerating the HTML viewers.")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if not args.underlying:
         raise ValueError("No input underlying ticker received. Please entering an underlying US equity ticker for the calculation.")
@@ -140,13 +140,13 @@ if __name__ == "__main__":
 
     dte_grid, iv_matrix, validation = build_surface(
         treasury_yield_mgr, asof, spot, chain, divs)
-    day_dir = DATA_DIR / underlying_ticker / asof.isoformat()
+    day_dir = SYMBOLS_DIR / underlying_ticker / asof.isoformat()
     save(day_dir, dte_grid, iv_matrix, validation)
-    prune_runs(DATA_DIR / underlying_ticker)
+    prune_runs(SYMBOLS_DIR / underlying_ticker)
 
     if not args.no_viz:
         try:
-            from viz import regenerate  # lazy: keeps plotly off the calc path
+            from .viz import regenerate  # lazy: keeps plotly off the calc path
             regenerate()
         except (Exception, SystemExit) as e:  # viz must never fail the calc
             print(f"viz update skipped: {e}", file=sys.stderr)
@@ -159,3 +159,7 @@ if __name__ == "__main__":
               f"p90={diffs[int(len(diffs) * .9)]:.4f}")
     assert 0.02 < finite.min() and finite.max() < 2.0, "surface IVs out of sane range"
     print("OK")
+
+
+if __name__ == "__main__":
+    main()
