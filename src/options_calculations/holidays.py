@@ -67,11 +67,6 @@ def verify_holiday_files() -> tuple[list[date], list[date]]:
     holidays, earlyclose = fetch_holidays()
     return holidays, earlyclose
 
-# def convert_datetime(input_date: int | str) -> date:
-#     output_datetime = datetime.strptime(str(input_date), "%Y%m%d"
-#                                         ).replace(tzinfo=ZoneInfo("US/Eastern"))
-#     return output_datetime.date()
-
 def is_holiday(input_date: date):
     holidays, early_close = verify_holiday_files()
     if input_date in holidays:
@@ -95,25 +90,13 @@ def holiday_weekend_check(input_date: date):
     return schedule_mark
 
 if __name__ == "__main__":
-    # hols = holidays()
-    # print(f"{len(hols)} full closures in {PATH}:")
-    # for d, n in sorted(hols.items()):
-    #     print(f"  {d}  {n}")
-    # assert date(2026, 11, 26) in hols and date(2026, 11, 27) not in hols  # early close kept
-    # assert not is_trading_day(date(2026, 9, 7))      # Labor Day
-    # assert is_trading_day(date(2026, 9, 8))          # Tuesday
-    # assert not is_trading_day(date(2026, 9, 12))     # Saturday
+    def convert_datetime(input_date: int | str) -> date:
+        output_datetime = datetime.strptime(str(input_date), "%Y%m%d"
+                                            ).replace(tzinfo=ZoneInfo("US/Eastern"))
+        return output_datetime.date()
 
-    # # year-rollover: stale file gets replaced with the current calendar
-    # tmp = Path("/tmp/holiday_rollover_test.txt")
-    # tmp.write_text("# year=1999\n1999-01-01,Bogus\n")
-    # fresh = holidays(tmp)
-    # assert _read(tmp)[0] == date.today().year and date(1999, 1, 1) not in fresh
-    # print("OK (incl. rollover)")
     d = 20261224
-    # input_date = datetime.strptime(str(d), "%Y%m%d").replace(tzinfo=ZoneInfo("US/Eastern")).date()
-    converted = convert_datetime(d)
-    print(converted)
-    print(type(converted))
-    schedule_mark = holiday_weekend_check(input_date=d)
+    converted_date = convert_datetime(d)
+    print(converted_date)
+    schedule_mark = holiday_weekend_check(input_date=converted_date)
     print(schedule_mark)

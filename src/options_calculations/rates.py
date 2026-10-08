@@ -100,7 +100,7 @@ if __name__ == "__main__":
     request_date = date.strptime(d, "%Y%m%d")
     treasury_yield_mgr = TreasuryYieldRatesManager()
     tenors, rates, yields_cc = treasury_yield_mgr.fetch_curve(request_date)
-    print(f"Curve as of {asof}")
+    print(f"Curve as of {request_date}")
     for dte in (7, 14, 30, 50, 70, 90, 180):
         r = treasury_yield_mgr.interpolate_rate(dte / 365)
         print(f"  DTE {dte:>3}: {r * 100:.3f}%")
