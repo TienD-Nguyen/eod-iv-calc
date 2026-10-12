@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "enabled": true,
+  "preset": "default",
+  "lines": [
+    [
+      {
+        "id": "cwd-mv4fl85b-07llht",
+        "type": "cwd",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "icon": "",
+          "fg": "blue",
+          "bg": "default",
+          "bold": false,
+          "cwdDisplayStyle": "default",
+          "segments": 2
+        }
+      },
+      {
+        "id": "git-branch-mv4fkgvl-2dbx2o",
+        "type": "git-branch",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": false,
+          "icon": "",
+          "text": "",
+          "fg": "magenta",
+          "bg": "default",
+          "bold": false,
+          "gitBranchDisplayStyle": "round-brackets",
+          "surroundLeft": "",
+          "surroundRight": ""
+        }
+      },
+      {
+        "id": "git-diff-mv4fkgvl-ajijw3",
+        "type": "git-diff",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": false,
+          "icon": "",
+          "text": "",
+          "fg": "yellow",
+          "bg": "default",
+          "bold": false,
+          "gitDiffMode": "compact"
+        }
+      },
+      {
+        "id": "text-verbosity-mv4fkgvl-aidvik",
+        "type": "text-verbosity",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": true,
+          "icon": "",
+          "text": "",
+          "fg": "cyan",
+          "bg": "default",
+          "bold": false
+        }
+      },
+      {
+        "id": "git-status-mv4g2w8y-tqovs8",
+        "type": "git-status",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": true,
+          "icon": "",
+          "text": "",
+          "fg": "yellow",
+          "bg": "default",
+          "bold": false
+        }
+      },
+      {
+        "id": "context-bar-mv4g658r-1ix9bm",
+        "type": "context-bar",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": false,
+          "icon": "",
+          "text": "",
+          "fg": "blue",
+          "bg": "default",
+          "bold": false,
+          "tokenFormatStyle": "default",
+          "contextBarMode": "short",
+          "contextConditionalColors": true,
+          "contextWarningPercent": 70,
+          "contextDangerPercent": 90,
+          "warningFg": "yellow",
+          "warningBg": "default",
+          "dangerFg": "red",
+          "dangerBg": "default"
+        }
+      },
+      {
+        "id": "cost-mv4fkgvl-ro0g81",
+        "type": "cost",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "icon": "",
+          "fg": "green",
+          "bg": "default",
+          "bold": false,
+          "costFormatStyle": "default",
+          "showSubscription": false
+        }
+      },
+      {
+        "id": "total-time-mv4fkgvl-6274h3",
+        "type": "total-time",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "icon": "",
+          "fg": "yellow",
+          "bg": "default",
+          "bold": false
+        }
+      },
+      {
+        "id": "flex-separator-mv4flz4r-atxluv",
+        "type": "flex-separator",
+        "enabled": true,
+        "options": {
+          "fg": "default",
+          "bg": "default",
+          "bold": false,
+          "hideWhenEmpty": true
+        }
+      },
+      {
+        "id": "model-provider-mv4fkgvl-gp9jc0",
+        "type": "model-provider",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "icon": "",
+          "fg": "cyan",
+          "bg": "default",
+          "bold": false
+        }
+      },
+      {
+        "id": "thinking-level-mv4fkgvl-56goi9",
+        "type": "thinking-level",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": false,
+          "icon": "",
+          "text": "",
+          "fg": "magenta",
+          "bg": "default",
+          "bold": false
+        }
+      }
+    ]
+  ],
+  "separator": "dot",
+  "separatorFg": "default",
+  "separatorBg": "default",
+  "iconMode": "emoji",
+  "minimalist": false,
+  "terminal": {
+    "widthMode": "full",
+    "colorLevel": "ansi256"
+  },
+  "extensionStatusRow": {
+    "hiddenKeys": [],
+    "knownKeys": [
+      "ponytail"
+    ]
+  }
+}
