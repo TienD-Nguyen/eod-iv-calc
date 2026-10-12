@@ -10,15 +10,15 @@ HTML viewers. Read `README.md` for the overview, `DECISIONS.md` for *why*
 things are the way they are, `PROGRESS.md` for *where* things stand.
 
 ## Start-up tasks (new session)
+Before writing code:
 
-1. `git log --oneline -5` and `git status` — see where the last session ended
-2. Read `PROGRESS.md` — current state, known issues, next steps
-3. Skim `DECISIONS.md` before touching anything that looks odd — most odd
-   things are deliberate and recorded there (vendor dte distrust, exact-date
-   Treasury match, declared-only parity check, 5-run retention)
-4. `uv run pytest -q` — suite must start green (21 unit tests, ~4 s)
-5. Check `data/symbols/<ticker>/<asof>/` for what's already archived —
-   reruns of archived dates are free (zero vendor calls)
+1. **Confirm working directory** with `pwd`
+2. **Read this file** completely
+3. **Read project docs if present** (`PROGRESS.md`, `DECISIONS.md`, `README.md`, or equivalent)
+4. **Run** `./init.sh` to verify environment is health
+5. **Review recent commits** with `git log --oneline -5` and `git status` — see where the last session ended
+
+If baseline verification is failing, repair that first before adding new scope.
 
 ## Conventions that matter
 
@@ -44,12 +44,13 @@ things are the way they are, `PROGRESS.md` for *where* things stand.
 4. Rerunning the same date performs **zero** vendor calls (archive hit)
 5. A vendor failure in the new path can't corrupt existing archives
 6. If a design choice was made, it's appended to `DECISIONS.md` (what/why/when)
+7. Evidence recorded in `PROGRESS.md`
 
 ## Clock-out tasks (end of session)
 
-1. Update `PROGRESS.md`: move finished items to Completed, refresh Known
-   issues and Next steps
+1. Update `PROGRESS.md` with current state, move finished items to Completed, refresh Known-issues and next steps
 2. Append any design decisions to `DECISIONS.md`
-3. Commit with one-line message (what + why) and trailer
-   `Co-authored-by: Kimi <noreply@moonshot.ai>`; push only when the user asks
-4. Leave the suite green and the working tree intentional (no stray edits)
+3. Record any unresolved risks or blockers
+4. Commit with one-line descriptive message (what + why) and trailer
+   `Co-authored-by: Kimi <noreply@moonshot.ai>` once work is in safe state; push only when the user asks
+5. Leave the suite green and the working tree intentional (no stray edits)
