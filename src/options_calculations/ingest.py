@@ -214,7 +214,7 @@ class SnapShooter:
                 if d.get("effective_date", "") >= cutoff]
         if rows and max(d["effective_date"] for d in rows) > latest_on_file:
             merged = [d for d in existing if d.get("symbol") != ticker] + rows
-            self.divs_path.parent.mkdir(parents=True, exist_ok=True)
+            self.divs_path.mkdir(parents=True, exist_ok=True)
             self._write_csv_archive(content=merged, output_file=(self.divs_path / self.FILES[2]), fieldnames=rows[0])
             return rows
         return [d for d in ticker_on_file if d.get("effective_date", "") >= cutoff]
