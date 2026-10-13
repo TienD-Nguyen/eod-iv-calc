@@ -135,7 +135,7 @@ def test_viz_regenerates_from_pipeline_outputs(env, tmp_path):
     _, _, data = env
     eod_iv_calc.main(ARGS)
     viz.regenerate(data_dir=data / "symbols", out_dir=tmp_path / "viz")
-    assert (tmp_path / "viz" / "viz.html").exists()
+    assert (tmp_path / "viz" / "surfaces.html").exists()
     assert (tmp_path / "viz" / "smiles.html").exists()
 
 

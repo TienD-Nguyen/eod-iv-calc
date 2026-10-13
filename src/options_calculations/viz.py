@@ -1,6 +1,6 @@
 """Interactive vol viewers, self-contained HTML (no server needed), multi-ticker.
 
-viz.html:    3D gridded surface (log-moneyness x DTE); a ticker dropdown
+surfaces.html:    3D gridded surface (log-moneyness x DTE); a ticker dropdown
              (restyle: visibility) composes with the date slider (animate:
              data) because the two controls touch disjoint trace attributes.
 smiles.html: one Plotly figure per ticker, each with its own expiry legend
@@ -181,16 +181,16 @@ def regenerate(data_dir: Path = SYMBOLS_DIR, out_dir: Path = VIZ_DIR) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     surfaces = load_surfaces(data_dir)
     surf = build_surface_figure(surfaces)
-    (out_dir / "viz.html").write_text(surf.to_html())
+    (out_dir / "surfaces.html").write_text(surf.to_html())
     smiles = load_smiles(data_dir)
     figs = {t: build_smile_figure(t, days) for t, days in smiles.items()}
     write_smiles_html(figs, out_dir / "smiles.html")
-    print(f"{out_dir}/viz.html: {len(surfaces)} ticker(s) | "
+    print(f"{out_dir}/surfaces.html: {len(surfaces)} ticker(s) | "
           f"smiles.html: {len(figs)} ticker figure(s)")
 
 
 if __name__ == "__main__":
     out_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else VIZ_DIR
     regenerate(out_dir=out_dir)
-    assert (out_dir / "viz.html").exists() and (out_dir / "smiles.html").exists()
+    assert (out_dir / "surfaces.html").exists() and (out_dir / "smiles.html").exists()
     print("OK")
