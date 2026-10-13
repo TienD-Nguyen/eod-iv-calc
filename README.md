@@ -1,18 +1,20 @@
 # EOD Implied-Volatility Surface
 
-Daily end-of-day implied-volatility surfaces for US equity options (MAG10
-universe), priced with an American CRR binomial model and rendered as
-interactive HTML viewers.
+As I get more interested in derivatives markets and options pricing, it would be a natural step to create a small project, that consolidates the theory I have learned and discover other approaches. 
+
+This is a small Python pipeline, that calculates daily end-of-day implied volatility surfaces for US equity options (mainly focusing on MAG 10 universe). It utilises American CRR Binomial Tree model, with Black-Scholes-Merton model as a reference point, and renders as interactive HTML viewers for surfaces review through `plotly`.
+
+The project is also a starting point of me learning on coding agents' harness, hence the collaboration with Kimi K3 model, and the exist of harnessing files.
 
 ## What it does
 
-One command per trading day:
+The pipeline calculates the implied volatility using EOD data from [LondonStrategicEdge](https://londonstrategicedge.com/), and outputs HTML viewers for both volatility skews and surfaces of required equity ticker. A single command per trading day for each ticker:
 
 ```bash
 uv run eod-iv -d 20260923 -u AAPL
 ```
 
-runs the full pipeline:
+The full pipeline contains numbers of component, includes:
 
 1. **Rates** — US Treasury daily par yield curve → continuously-compounded
    rates, cubic-spline interpolated to any tenor (`rates.py`)
