@@ -79,3 +79,13 @@ Python ≥ 3.14. Deps: lse-data, numpy, scipy, plotly, python-dotenv
 
 - `DECISIONS.md` — design decisions and their rationale, chronological
 - `PROGRESS.md` — current state, known issues, next steps
+
+## What's Next?
+
+As the project seems rather simple and perform a specific calculation within the vast universe of options pricing, I am planning for an extension of Greeks calculations, theoretical pricing, and applying more appropriate interpolation methods to the pipeline, and parallel computations. Obviously, further studies would be required here.
+
+Also, continue applying what I have learned on coding agent's harness for a consistent outputs' quality, and align with my intention of the project.
+
+## About
+
+It's just me, Tien or Dustin, who is still trying to figure things out. <(￣︶￣)>
